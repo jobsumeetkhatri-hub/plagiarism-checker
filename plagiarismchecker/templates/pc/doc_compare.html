@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compare Two Documents - Plagiarism Checker</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+        }
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        .nav-btn {
+            background: white;
+            color: #667eea;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+        }
+        .nav-btn:hover {
+            background: #f0f0f0;
+        }
+        .compare-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .card h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: monospace;
+            resize: vertical;
+        }
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            margin: 10px 0;
+        }
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s;
+        }
+        button:hover {
+            transform: translateY(-2px);
+        }
+        .result {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+        }
+        .percentage {
+            font-size: 72px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .similarity-label {
+            font-size: 18px;
+            color: #666;
+            margin-top: 10px;
+        }
+        hr {
+            margin: 20px 0;
+            border: none;
+            border-top: 2px solid #eee;
+        }
+        @media (max-width: 768px) {
+            .compare-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📊 Compare Two Documents</h1>
+        
+        <div class="nav-buttons">
+            <a href="/" class="nav-btn">Text/File Check</a>
+            <a href="/compare/" class="nav-btn">Compare Two Texts</a>
+        </div>
+        
+        <!-- Text Comparison -->
+        <div class="compare-container">
+            <div class="card">
+                <h2>📝 Document 1</h2>
+                <form method="POST" action="/twofiletest1/">
+                    {% csrf_token %}
+                    <textarea name="q1" rows="10" placeholder="Enter first text here..."></textarea>
+            </div>
+            <div class="card">
+                <h2>📝 Document 2</h2>
+                    <textarea name="q2" rows="10" placeholder="Enter second text here..."></textarea>
+                    <br><br>
+                    <button type="submit">Compare Texts</button>
+                </form>
+            </div>
+        </div>
+        
+        <hr>
+        
+        <!-- File Comparison -->
+        <div class="compare-container">
+            <div class="card">
+                <h2>📁 File 1</h2>
+                <form method="POST" action="/twofilecompare1/" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <input type="file" name="docfile1" accept=".txt,.docx">
+            </div>
+            <div class="card">
+                <h2>📁 File 2</h2>
+                    <input type="file" name="docfile2" accept=".txt,.docx">
+                    <br><br>
+                    <button type="submit">Compare Files</button>
+                </form>
+            </div>
+        </div>
+        
+        {% if result %}
+        <div class="result">
+            <h3>📊 Similarity Score</h3>
+            <div class="percentage">{{ result }}%</div>
+            <div class="similarity-label">
+                {% if result < 30 %}
+                    ✅ Low similarity - Likely original content
+                {% elif result < 70 %}
+                    ⚠️ Moderate similarity - Review recommended
+                {% else %}
+                    🔴 High similarity - Potential plagiarism detected
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>
